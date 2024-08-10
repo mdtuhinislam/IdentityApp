@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace IdentityApp.JWTService
+namespace IdentityApp.Services
 {
     public class JWTService
     {
@@ -34,11 +34,10 @@ namespace IdentityApp.JWTService
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(userClaims),
-                Expires = DateTime.Now.AddDays(int.Parse(_configuration["JWT : ExpireInDays"])),
+                Expires = DateTime.Now.AddDays(int.Parse(_configuration["JWT:ExpireInDays"])),
                 SigningCredentials = credintial,
-                Issuer = _configuration["JWT : Issuer"]
-
-
+                Issuer = _configuration["JWT:Issuer"],
+                Audience = _configuration["JWT:Audience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

@@ -1,6 +1,6 @@
 using System.Text;
 using IdentityApp.Data;
-using IdentityApp.JWTService;
+using IdentityApp.Services;
 using IdentityApp.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -48,10 +48,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         option.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT : Key"])),
-            ValidIssuer = builder.Configuration["JWT : Issuer"],
+            ValidateAudience = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
             ValidateIssuer = true,
-            RequireAudience = false
+            //ValidAudience = builder.Configuration["JWT:Audience"]
         };
     });
 
