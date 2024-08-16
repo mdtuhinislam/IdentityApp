@@ -6,7 +6,7 @@ namespace IdentityApp.DTOs.Account
     {
         [Required]
         [StringLength(15, MinimumLength = 3, ErrorMessage ="Maximum {1} and minimum {2} charecter ")]
-        public string FistName { get; set; }
+        public string FirstName { get; set; }
         [Required]
         [StringLength(15, MinimumLength = 3, ErrorMessage = "Maximum {1} and minimum {2} charecter ")]
         public string LastName { get; set; }

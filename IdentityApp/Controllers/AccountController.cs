@@ -48,7 +48,7 @@ namespace IdentityApp.Controllers
                 return BadRequest($"This {registerDto.Email} is used by another user, please enter an email except this one!");
             var userToAdd = new User
             {
-                FirstName = registerDto.FistName.ToLower(),
+                FirstName = registerDto.FirstName.ToLower(),
                 LastName = registerDto.LastName.ToLower(),
                 Email = registerDto.Email.ToLower(),
                 UserName = registerDto.Email.ToLower(),
