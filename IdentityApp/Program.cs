@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,13 +60,33 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddCors();
 
+builder.Services.Configure<ApiBehaviorOptions>(opt =>
+{
+    opt.InvalidModelStateResponseFactory = actionContext =>
+    {
+        var errors = actionContext.
+         ModelState.
+         Where(x => x.Value.Errors.Count > 0).
+         SelectMany(x => x.Value.Errors).
+         Select(x => x.ErrorMessage).ToList();
+
+        var toReturn = new
+        {
+            Errors = errors
+        };
+        return new BadRequestObjectResult(toReturn);
+    };
+});
+
 var app = builder.Build();
 
 app.UseCors(opt =>
 {
     opt.AllowAnyHeader()
-    .AllowAnyOrigin()
-    .AllowAnyMethod();
+    //.AllowCredentials()
+    .AllowAnyMethod()
+    //.WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+    .AllowAnyOrigin();
 });
 
 // Configure the HTTP request pipeline.
