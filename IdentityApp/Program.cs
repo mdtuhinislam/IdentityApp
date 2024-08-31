@@ -26,6 +26,7 @@ builder.Services.AddDbContext<Context>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<JWTService>();
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddIdentityCore<User>(option =>
 {
     option.Password.RequiredLength = 6;
