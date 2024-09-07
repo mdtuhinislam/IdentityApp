@@ -160,6 +160,76 @@ namespace IdentityApp.Controllers
             }
 
         }
+        [HttpPost("resend-email-confirmation-link/{email}")]
+        public async Task<IActionResult> ResentEmailConfirmationLink(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("Invalid email addess.");
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Unauthorized("You are not a registered user, please get registered firs.");
+            if (user.EmailConfirmed == true)
+                return BadRequest("Your email has been validated once, you can login.");
+            try
+            {
+                if (await SendConfirmationEmailAsync(user))
+                    return Ok(new JsonResult(new
+                    {
+                        title = "Confirmation link sent.",
+                        message= "Please confirm your email address."
+                    }));
+                return BadRequest("Failed to send email, please try again!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to send email, please try again!, exception occured with: {ex.Message.ToString()}");
+            }
+        }
+
+        [HttpPost("forgot-user-or-password/{email}")]
+        public async Task<IActionResult> ForgotUserNameOrPassword(string email)
+        {
+            
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                    return BadRequest("Invalid email addess.");
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                    return Unauthorized("You are not a registered user, please get registered firs.");
+                if (user.EmailConfirmed == false)
+                    return BadRequest("This email is not registered!. Please get registered first.");
+                if (await SendForgotUserNameOrPasswordEmail(user))
+                    return Ok(new JsonResult(new { title = "Forgot user or password email sent.", message = "Please check your email." }));
+                return BadRequest("Faild to send email, contact admin.");
+            }
+            catch (Exception)
+            {
+                return BadRequest("Faild to send email, contact admin.");
+            }
+
+        }
+
+
+
+        private async Task<bool> SendForgotUserNameOrPasswordEmail(User user)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            var url = $"{_config["JWT:ClientUrl"]}{_config["Email:ConfirmEmailPath"]}?toke={token}&email={user.Email}";
+
+            var body = $"<p>Hello {user.FirstName} {user.LastName}</p>" +
+                $"<p>User Name : {user.UserName}</p>" +
+                $"<p>Please click following link to reset password</p>" +
+                $"<p><a href=\"{url}\">Click here</a></p>" +
+                "<p>Thank you</p>" +
+                $"<br>{_config["Email:ApplicationName"]}";
+
+            var emailSend = new EmailSendDto(user.Email, "Confirm your email.", body);
+            return await _emailService.SendEmailAsync(emailSend);
+        }
+
 
 
 

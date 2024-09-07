@@ -1,0 +1,40 @@
+# Ignore the .git directory
+.git
+
+# Ignore node_modules (if you have a front-end project in the same repo)
+node_modules
+
+# Ignore logs and temporary files
+logs
+*.log
+temp/
+tmp/
+
+# Ignore published output
+out/
+bin/
+obj/
+
+# Ignore user-specific files
+*.swp
+*~
+.vscode/
+*.user
+*.suo
+*.bak
+*.ncb
+*.db
+*.DS_Store
+*.vs/
+
+# Ignore Dockerfile itself and docker-compose files (optional, depending on your structure)
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# Ignore environment files (optional, depending on your environment management)
+.env
+*.env
+
+# Ignore local settings
+appsettings.Development.json
